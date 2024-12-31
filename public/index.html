@@ -11,11 +11,12 @@
     <h1>Formulario de Contacto</h1>
 
     <!-- Mostrar mensaje si la IP está excluida -->
-    <div id="ipMessage" style="color: green; text-align: center; font-weight: bold; margin-bottom: 20px; display: none;">
+    <div id="ipMessage" style="color: green; text-align: center; font-weight: bold; margin-bottom: 20px;">
+        <!-- Este mensaje solo se mostrará si la IP está excluida -->
         IP excluida, el CAPTCHA ha sido omitido.
     </div>
 
-    <form id="contactForm" action="/submit" method="POST">
+    <form action="/submit" method="POST">
         <label for="name">Nombre:</label>
         <input type="text" id="name" name="name" required><br>
 
@@ -32,19 +33,26 @@
     </form>
 
     <script>
-        // Realizar una solicitud para verificar si la IP está excluida
-        fetch('/submit', { method: 'POST', body: new URLSearchParams(new FormData(document.getElementById('contactForm'))) })
-            .then(response => response.json())
-            .then(data => {
-                // Mostrar el mensaje si la IP está excluida
-                if (data.isIPExcluded) {
-                    document.getElementById('ipMessage').style.display = 'block';  // Mostrar el mensaje
-                    document.querySelector('.cf-turnstile').style.display = 'none';  // Ocultar el widget de Turnstile
-                } else {
-                    document.querySelector('.cf-turnstile').style.display = 'block';  // Mostrar el widget de Turnstile
-                }
-            })
-            .catch(error => console.error('Error al verificar la IP:', error));
+        // Realizar la solicitud para verificar si la IP está excluida
+        fetch('/submit', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ name: '', email: '', message: '' })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.isIPExcluded) {
+                // Si la IP está excluida, mostrar el mensaje y ocultar el CAPTCHA
+                document.getElementById('ipMessage').style.display = 'block';
+                document.querySelector('.cf-turnstile').style.display = 'none';
+            } else {
+                // Si la IP no está excluida, mostrar el CAPTCHA
+                document.querySelector('.cf-turnstile').style.display = 'block';
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+        });
     </script>
 </body>
 </html>
