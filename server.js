@@ -11,10 +11,13 @@ const excludedIPs = ['192.168.1.1', '186.112.30.85'];
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Servir archivos estáticos (CSS, JS, imágenes) desde la carpeta public
+app.use(express.static('public'));
+
 // Endpoint del formulario
 app.post('/submit', async (req, res) => {
     const { name, email, message, 'cf-turnstile-response': token } = req.body;
-    
+
     // Obtener la IP real del cliente
     const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
@@ -49,9 +52,7 @@ app.post('/submit', async (req, res) => {
     }
 });
 
-// Servir el frontend
-app.use(express.static('public'));
-
+// Iniciar el servidor
 app.listen(PORT, () => {
     console.log(`Servidor funcionando en http://localhost:${PORT}`);
 });
