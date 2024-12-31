@@ -1,0 +1,17 @@
+{
+  "name": "turnstile",
+  "version": "1.0.0",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "Formulario con protección de Turnstile",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "node-fetch": "^3.3.2"
+  }
+}
