@@ -1,6 +1,6 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const fetch = require('node-fetch');
+import express from 'express';
+import bodyParser from 'body-parser';
+import fetch from 'node-fetch';
 
 const app = express();
 const PORT = process.env.PORT || 3000;
