@@ -4,12 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Formulario de Contacto</title>
-    <!-- Asegúrate de que esta ruta sea la correcta -->
     <link rel="stylesheet" href="/css/estilo.css">
     <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
 </head>
 <body>
     <h1>Formulario de Contacto</h1>
+
+    <!-- Mostrar mensaje si la IP está excluida -->
+    <div id="ipMessage" style="color: green; text-align: center; font-weight: bold; margin-bottom: 20px;">
+        <!-- Este mensaje solo se mostrará si la IP está excluida -->
+        IP excluida, el CAPTCHA ha sido omitido.
+    </div>
+
     <form action="/submit" method="POST">
         <label for="name">Nombre:</label>
         <input type="text" id="name" name="name" required><br>
@@ -21,9 +27,20 @@
         <textarea id="message" name="message" required></textarea><br>
 
         <!-- Agregar el widget Turnstile -->
-        <div class="cf-turnstile" data-sitekey="tu-clave-publica-de-turnstile"></div><br>
+        <div class="cf-turnstile" data-sitekey="tu-clave-publica-de-turnstile" style="display:none;"></div><br>
 
         <button type="submit">Enviar</button>
     </form>
+
+    <script>
+        // Comprobar si la IP está excluida y mostrar el mensaje
+        const isIPExcluded = false;  // Cambia esto según la lógica del backend
+        if (isIPExcluded) {
+            document.getElementById('ipMessage').style.display = 'block';
+            document.querySelector('.cf-turnstile').style.display = 'none';  // Ocultar el widget
+        } else {
+            document.querySelector('.cf-turnstile').style.display = 'block';  // Mostrar el widget de Turnstile
+        }
+    </script>
 </body>
 </html>

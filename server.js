@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Lista de IPs excluidas
-const excludedIPs = ['192.168.1.1']; // Asegúrate de agregar las IPs que deseas excluir
+const excludedIPs = []; // Asegúrate de agregar las IPs que deseas excluir
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -22,9 +22,11 @@ app.post('/submit', async (req, res) => {
     if (excludedIPs.includes(clientIP)) {
         console.log(`IP ${clientIP} está excluida. Se salta la verificación de Turnstile.`);
         
-        // Procesar datos del formulario directamente
-        console.log(`Nombre: ${name}, Email: ${email}, Mensaje: ${message}`);
-        return res.send('Formulario enviado correctamente.');
+        // Aquí podrías enviar un objeto al frontend que indique que la IP está excluida
+        return res.send({
+            message: 'Formulario enviado correctamente.',
+            isIPExcluded: true // Esto se pasará al frontend
+        });
     }
 
     // Si la IP no está excluida, verificar Turnstile
