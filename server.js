@@ -6,27 +6,28 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Lista de IPs excluidas
-const excludedIPs = ['192.168.1.1'];
+const excludedIPs = ['192.168.1.1']; // Asegúrate de agregar las IPs que deseas excluir
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// Servir archivos estáticos (CSS, JS, imágenes) desde la carpeta public
-app.use(express.static('public'));
-
 // Endpoint del formulario
 app.post('/submit', async (req, res) => {
     const { name, email, message, 'cf-turnstile-response': token } = req.body;
-
+    
     // Obtener la IP real del cliente
     const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
-    // Excluir por IP
+    // Excluir por IP (no verificar Turnstile si la IP está en la lista de exclusión)
     if (excludedIPs.includes(clientIP)) {
-        return res.status(403).send('Acceso denegado: IP bloqueada.');
+        console.log(`IP ${clientIP} está excluida. Se salta la verificación de Turnstile.`);
+        
+        // Procesar datos del formulario directamente
+        console.log(`Nombre: ${name}, Email: ${email}, Mensaje: ${message}`);
+        return res.send('Formulario enviado correctamente.');
     }
 
-    // Verificar Turnstile
+    // Si la IP no está excluida, verificar Turnstile
     const turnstileSecret = '0x4AAAAAAA4HSZwKaQW1z_NXN-tgfOl8ISY';
     const verifyURL = 'https://challenges.cloudflare.com/turnstile/v0/siteverify';
 
@@ -39,11 +40,12 @@ app.post('/submit', async (req, res) => {
 
         const data = await response.json();
 
+        // Si Turnstile no verifica correctamente, devolver un error
         if (!data.success) {
             return res.status(400).send('Error de verificación CAPTCHA.');
         }
 
-        // Procesar datos del formulario
+        // Si Turnstile valida correctamente, procesar datos del formulario
         console.log(`Nombre: ${name}, Email: ${email}, Mensaje: ${message}`);
         res.send('Formulario enviado correctamente.');
     } catch (error) {
@@ -52,7 +54,9 @@ app.post('/submit', async (req, res) => {
     }
 });
 
-// Iniciar el servidor
+// Servir el frontend
+app.use(express.static('public'));
+
 app.listen(PORT, () => {
     console.log(`Servidor funcionando en http://localhost:${PORT}`);
 });
