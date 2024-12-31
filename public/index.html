@@ -16,7 +16,7 @@
         IP excluida, el CAPTCHA ha sido omitido.
     </div>
 
-    <form action="/submit" method="POST">
+    <form action="/submit" method="POST" id="contactForm">
         <label for="name">Nombre:</label>
         <input type="text" id="name" name="name" required><br>
 
@@ -33,25 +33,29 @@
     </form>
 
     <script>
-        // Realizar la solicitud para verificar si la IP está excluida
-        fetch('/submit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ name: '', email: '', message: '' })
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.isIPExcluded) {
-                // Si la IP está excluida, mostrar el mensaje y ocultar el CAPTCHA
-                document.getElementById('ipMessage').style.display = 'block';
-                document.querySelector('.cf-turnstile').style.display = 'none';
-            } else {
-                // Si la IP no está excluida, mostrar el CAPTCHA
-                document.querySelector('.cf-turnstile').style.display = 'block';
-            }
-        })
-        .catch(error => {
-            console.error('Error:', error);
+        // Escuchar el evento de envío del formulario
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const formData = new FormData(this);
+            fetch('/submit', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.isIPExcluded) {
+                    // Si la IP está excluida, mostrar el mensaje y ocultar el CAPTCHA
+                    document.getElementById('ipMessage').style.display = 'block';
+                    document.querySelector('.cf-turnstile').style.display = 'none';
+                } else {
+                    // Si la IP no está excluida, mostrar el CAPTCHA y proceder con la validación
+                    document.querySelector('.cf-turnstile').style.display = 'block';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         });
     </script>
 </body>

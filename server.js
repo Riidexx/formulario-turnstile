@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Lista de IPs excluidas
-const excludedIPs = []; // Asegúrate de agregar las IPs que deseas excluir
+const excludedIPs = []; // Agregar las IPs que deseas excluir
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -18,14 +18,16 @@ app.post('/submit', async (req, res) => {
     // Obtener la IP real del cliente
     const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
 
+    console.log('Client IP:', clientIP);  // Verifica cuál es la IP real
+
     // Excluir por IP (no verificar Turnstile si la IP está en la lista de exclusión)
     if (excludedIPs.includes(clientIP)) {
         console.log(`IP ${clientIP} está excluida. Se salta la verificación de Turnstile.`);
         
-        // Enviar respuesta con el estado de la IP
-        return res.json({
+        // Aquí podrías enviar un objeto al frontend que indique que la IP está excluida
+        return res.send({
             message: 'Formulario enviado correctamente.',
-            isIPExcluded: true // Esto se enviará al frontend para que sepa si debe omitir el CAPTCHA
+            isIPExcluded: true // Esto se pasará al frontend
         });
     }
 
