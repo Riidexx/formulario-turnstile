@@ -6,7 +6,7 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Lista de IPs excluidas
-const excludedIPs = []; // Asegúrate de agregar las IPs que deseas excluir
+const excludedIPs = ["186.112.30.85"]; // Asegúrate de agregar las IPs que deseas excluir
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
