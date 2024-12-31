@@ -22,10 +22,10 @@ app.post('/submit', async (req, res) => {
     if (excludedIPs.includes(clientIP)) {
         console.log(`IP ${clientIP} está excluida. Se salta la verificación de Turnstile.`);
         
-        // Aquí podrías enviar un objeto al frontend que indique que la IP está excluida
-        return res.send({
+        // Enviar respuesta con el estado de la IP
+        return res.json({
             message: 'Formulario enviado correctamente.',
-            isIPExcluded: true // Esto se pasará al frontend
+            isIPExcluded: true // Esto se enviará al frontend para que sepa si debe omitir el CAPTCHA
         });
     }
 
